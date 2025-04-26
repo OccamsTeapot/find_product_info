@@ -5,8 +5,6 @@ from dotenv import load_dotenv
 import os
 import argparse
 
-load_dotenv()
-
 parser = argparse.ArgumentParser()
 parser.add_argument(
     "-m",
@@ -45,16 +43,20 @@ parser.add_argument(
     default="CBD gummies for sleep"
 )
 
+load_dotenv()
+
 args = parser.parse_args()
 client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
-res = search(
+urls = search(
     args.search, num_results=200, unique=True, lang="en", region="us"
 )
-for i in res:
-    text = scrape_text_from_url(i)
-    print("------------")
-    print("URL:", i)
-    products = extract_products(text, args.prompt, args.model, client)
-    print("------------")
-    print()
+
+for u in urls:
+    text = scrape_text_from_url(u)
+    if text:
+        print("------------")
+        print("URL:", u)
+        products = extract_products(text, args.prompt, args.model, client)
+        print("------------")
+        print()
