@@ -72,14 +72,6 @@ def get_texts(path: str) -> dict[str, str]:
     return output
 
 
-def remove_long_words(text: str, max_len=20) -> str:
-    words = text.split()
-    filtered_words = [word for word in words if len(word) <= max_len]
-    cleaned_text = " ".join(filtered_words)
-
-    return cleaned_text
-
-
 def scrape_text_from_url(url: str) -> Union[str, None]:
     try:
         response = requests.get(url)
@@ -91,7 +83,7 @@ def scrape_text_from_url(url: str) -> Union[str, None]:
         soup = BeautifulSoup(response.content, "html.parser")
         text = soup.get_text()
 
-        return remove_long_words(text.strip().replace("  ", ""))
+        return text.strip().replace("  ", "")
 
     except requests.RequestException as e:
         print(f"Error fetching URL: {e}")

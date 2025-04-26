@@ -24,7 +24,7 @@ parser.add_argument(
     help="Prompt to the system.",
     type=str,
     required=False,
-    default="Extract information on each CBD gummy product you can find in this text from a website. Capture the name of the `brand`, the name of the `product`, a url to the lab report if it's available, and whether or not it's a product page."
+    default="Extract information as is in verbatim on each CBD gummy product you can find in this text from a website. Capture the name of the `brand`, the name of the `product`, a url to the lab report if it's available, and whether or not it's a product page. Include the URL of the product if available."
 )
 parser.add_argument(
     "-o",
@@ -53,7 +53,8 @@ res = search(
 )
 for i in res:
     text = scrape_text_from_url(i)
-    print("----")
-    print(i)
+    print("------------")
+    print("URL:", i)
     products = extract_products(text, args.prompt, args.model, client)
-    print("----")
+    print("------------")
+    print()
