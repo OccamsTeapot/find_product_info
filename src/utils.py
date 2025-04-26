@@ -12,14 +12,23 @@ logger = logging.getLogger("utils")
 logging.getLogger().setLevel(logging.INFO)
 
 
-def extract_products(text: str, prompt: str, model: str, client: openai.Client) -> Union[ProductList, None]:
+def extract_products(
+    text: str, prompt: str, model: str, client: openai.Client
+) -> Union[ProductList, None]:
     messages: list[dict[str, str]] = []
     base_prompt = {"role": "system", "content": prompt}
     text_prompt = {"role": "user", "content": f"[TEXT START]\n{text}\n[TEXT END]"}
     messages.extend([base_prompt, text_prompt])
     try:
         response = client.beta.chat.completions.parse(
-            model=model, response_format=ProductList, messages=messages
+            model=model,
+            response_format=ProductList,
+            messages=messages,
+            temperature=1.18,
+            max_tokens=250,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
         )
         for choice in range(len(response.choices)):
             logger.info(f"Choice number {choice}\n")
