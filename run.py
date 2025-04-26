@@ -49,7 +49,7 @@ args = parser.parse_args()
 client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
 urls = search(
-    args.search, num_results=200, unique=True, lang="en", region="us"
+    args.search, num_results=10, unique=True, lang="en", region="us"
 )
 
 for u in urls:

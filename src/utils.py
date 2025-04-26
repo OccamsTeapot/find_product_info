@@ -25,7 +25,7 @@ def extract_products(
             response_format=ProductList,
             messages=messages,
             temperature=1.18,
-            max_tokens=250,
+            max_tokens=1000,
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
@@ -36,7 +36,7 @@ def extract_products(
                 print(p)
                 print()
         return response.choices
-    except openai.NotFoundErr as err:
+    except openai.NotFoundError as err:
         logger.error(f"Could not return response. Error: {err}")
         return None
 
