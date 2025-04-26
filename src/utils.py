@@ -2,11 +2,9 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
-from src.product import ProductList, Product
+from src.product import ProductList
 import logging
-from pprint import pprint
 from typing import Union
-from pprint import pprint
 import openai
 
 logging.basicConfig()
@@ -14,8 +12,8 @@ logger = logging.getLogger("utils")
 logging.getLogger().setLevel(logging.INFO)
 
 
-def extract_products(text, prompt, model, client) -> Union[ProductList, None]:
-    messages = []
+def extract_products(text: str, prompt: str, model: str, client: openai.Client) -> Union[ProductList, None]:
+    messages: list[dict[str, str]] = []
     base_prompt = {"role": "system", "content": prompt}
     text_prompt = {"role": "user", "content": f"[TEXT START]\n{text}\n[TEXT END]"}
     messages.extend([base_prompt, text_prompt])
@@ -23,13 +21,11 @@ def extract_products(text, prompt, model, client) -> Union[ProductList, None]:
         response = client.beta.chat.completions.parse(
             model=model, response_format=ProductList, messages=messages
         )
-
         for choice in range(len(response.choices)):
             logger.info(f"Choice number {choice}\n")
             for p in response.choices[choice].message.parsed.products:
                 print(p)
                 print()
-            #pprint(response.choices[choice].message.parsed)
         return response.choices
     except openai.NotFoundErr as err:
         logger.error(f"Could not return response. Error: {err}")
@@ -63,17 +59,6 @@ def scrape_internal_urls(url) -> list[str]:
             internal_urls.add(urljoin(base_url, href))
 
     return list(internal_urls)
-
-
-def get_texts(path: str) -> dict[str, str]:
-    output: dict[str, str] = {}
-    files = [f for f in os.listdir(path) if f.endswith(".txt")]
-    for f in files:
-        with open(f"{path}/{f}", "r") as file:
-            data = file.read().replace("\n", "")
-            output[f] = data
-
-    return output
 
 
 def scrape_text_from_url(url: str) -> Union[str, None]:
