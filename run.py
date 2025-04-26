@@ -4,6 +4,10 @@ import openai
 from dotenv import load_dotenv
 import os
 import argparse
+import pandas as pd
+from src.product import Product, ProductList
+from typing import Union, Any
+from pathlib import Path
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -46,17 +50,34 @@ parser.add_argument(
 load_dotenv()
 
 args = parser.parse_args()
+Path(args.output_dir).mkdir(parents=True, exist_ok=True)
+
 client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
 urls = search(
-    args.search, num_results=10, unique=True, lang="en", region="us"
+    args.search, num_results=20, unique=True, lang="en", region="us"
 )
 
-for u in urls:
+urls_df = pd.DataFrame(urls, columns=["url"])
+urls_df.to_csv(f"{args.output_dir}/search_results.csv", index=False)
+
+output_data: list[dict[str, Any]] = []
+for u in urls_df.url:
+    print(u)
     text = scrape_text_from_url(u)
     if text:
         print("------------")
-        print("URL:", u)
-        products = extract_products(text, args.prompt, args.model, client)
+        products: Union[ProductList, None] = extract_products(text, args.prompt, args.model, client)
+        if products:
+            for choice in range(len(products)):
+                print(f"Choice number {choice}\n")
+                for p in products[choice].message.parsed.products:
+                    res = dict(p)
+                    res["url"] = u
+                    print(res)
+                    output_data.append(res)
+                    pd.DataFrame(output_data).to_csv(f"{args.output_dir}/product_list.csv", index=False)
+                    print()
         print("------------")
         print()
+

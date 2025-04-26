@@ -30,11 +30,6 @@ def extract_products(
             frequency_penalty=0,
             presence_penalty=0,
         )
-        for choice in range(len(response.choices)):
-            logger.info(f"Choice number {choice}\n")
-            for p in response.choices[choice].message.parsed.products:
-                print(p)
-                print()
         return response.choices
     except openai.NotFoundError as err:
         logger.error(f"Could not return response. Error: {err}")
