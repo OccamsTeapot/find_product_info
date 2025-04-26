@@ -7,7 +7,7 @@ class Product(BaseModel):
     lab_report_url: str
     product_page: bool
     product_url_page: str
-
+    product_description: str
 
 class ProductList(BaseModel):
     products: list[Product]

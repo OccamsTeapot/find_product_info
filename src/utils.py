@@ -4,9 +4,10 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
 from src.product import ProductList, Product
 import logging
-import pprint
+from pprint import pprint
 from typing import Union
 from pprint import pprint
+import openai
 
 logging.basicConfig()
 logger = logging.getLogger("utils")
@@ -20,19 +21,22 @@ def extract_products(text, prompt, model, client) -> Union[ProductList, None]:
     messages.extend([base_prompt, text_prompt])
     try:
         response = client.beta.chat.completions.parse(
-            model=model, response_format=Product, messages=messages
+            model=model, response_format=ProductList, messages=messages
         )
 
         for choice in range(len(response.choices)):
             logger.info(f"Choice number {choice}\n")
-            pprint(response.choices[choice].message.parsed)
+            for p in response.choices[choice].message.parsed.products:
+                print(p)
+                print()
+            #pprint(response.choices[choice].message.parsed)
         return response.choices
     except openai.NotFoundErr as err:
         logger.error(f"Could not return response. Error: {err}")
         return None
 
 
-def scrape_internal_urls(url):
+def scrape_internal_urls(url) -> list[str]:
     # Send a GET request to the URL
     response = requests.get(url)
 
