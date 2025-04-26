@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
 from src.product import ProductList, Product
 import logging
-import pprint 
+import pprint
 from typing import Union
 from pprint import pprint
 
@@ -13,8 +13,7 @@ logger = logging.getLogger("utils")
 logging.getLogger().setLevel(logging.INFO)
 
 
-
-def extract_products(text, prompt, model, client) -> Union[ProductList,None]:
+def extract_products(text, prompt, model, client) -> Union[ProductList, None]:
     messages = []
     base_prompt = {"role": "system", "content": prompt}
     text_prompt = {"role": "user", "content": f"[TEXT START]\n{text}\n[TEXT END]"}
@@ -31,6 +30,7 @@ def extract_products(text, prompt, model, client) -> Union[ProductList,None]:
     except openai.NotFoundErr as err:
         logger.error(f"Could not return response. Error: {err}")
         return None
+
 
 def scrape_internal_urls(url):
     # Send a GET request to the URL
