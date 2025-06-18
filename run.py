@@ -26,7 +26,7 @@ parser.add_argument(
     help="Prompt to the system.",
     type=str,
     required=False,
-    default="Extract information as is in verbatim on each CBD gummy product you can find in this text from a website. Capture the name of the `brand`, the name of the `product`, a url to the lab report if it's available, and whether or not it's a product page. Include the URL of the product if available."
+    default="You are given a URL of a web page. Your task is to determine if the page is a product page for a CBD topical marketed for pain relief. A valid product page should meet all of the following criteria: 1) It lists a single product available for sale. 2) The product must be a CBD topical (e.g., cream, balm, gel, lotion) applied to the skin. 3) The product must be explicitly marketed for pain relief. If all criteria are met, extract the following: 1) Brand Name 2) Product Name 3)Product URL. Ensure that no more than two products from the same brand are included in total. If this would exceed the limit, return SKIP. Output Format (CSV-style): Brand Name,Product Name,URL. If the criteria are not met or the brand already has 2 products recorded, return SKIP."
 )
 parser.add_argument(
     "-o",
@@ -44,7 +44,7 @@ parser.add_argument(
     help="Search query for Google.",
     type=str,
     required=False,
-    default="CBD gummies for sleep"
+    default="CBD topicals for pain -youtube.com -reddit.com -amazon.com -forbes.com -healthline.com -medicalnewstoday.com -webmd.com -drugs.com -mayoclinic.org -arthritis.org -harvard.edu -quora.com -wikipedia.org -fda.gov -pdxmonthly.com -observer.com"
 )
 
 load_dotenv()
@@ -55,7 +55,7 @@ Path(args.output_dir).mkdir(parents=True, exist_ok=True)
 client = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
 urls = search(
-    args.search, num_results=20, unique=True, lang="en", region="us"
+    args.search, num_results=150, unique=True, lang="en", region="us"
 )
 
 urls_df = pd.DataFrame(urls, columns=["url"])
