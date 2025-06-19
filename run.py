@@ -51,5 +51,5 @@ for u in urls_df.url:
     text = scrape_text_from_url(u)
     scraped_text.append(text)
 
-url_with_text=urls_df.insert(1,"Text",scraped_text)
-urls_with_text.to_csv(f"{args.output_dir}/urls_with_text.csv", index=False)
+urls_df.insert(1,"Text",scraped_text)
+urls_df.to_csv(f"{args.output_dir}/urls_with_text.csv", index=False)
