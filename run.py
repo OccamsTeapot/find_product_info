@@ -32,7 +32,7 @@ Path(args.output_dir).mkdir(parents=True, exist_ok=True)
 
 urls = []
 urls.extend(search(
-    args.search, num_results=150, unique=True, lang="en", region="us"
+    args.search, sleep_interval=5, num_results=150, unique=True, lang="en", region="us"
 ))
 
 internals=[]
